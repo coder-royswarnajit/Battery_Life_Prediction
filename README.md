@@ -55,7 +55,7 @@ This combination allows the models to benefit from both theoretical understandin
 
 Ensure you have the following libraries installed:
 - **Common dependencies:** `numpy`, `pandas`, `scikit-learn`
-- **For LinearGradientBoosing.py:** `xgboost`
+- **For LinearGradientBoosing.py:** `xgboost`,`sklearn-ensemble`
 - **For QisKit.py:** `qiskit`, `qiskit-aer`, `qiskit-machine-learning`, `qiskit-algorithms`
 
 You can install the necessary packages using pip, for example:
