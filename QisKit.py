@@ -7,24 +7,24 @@ from sklearn.metrics import mean_squared_error, r2_score
 from qiskit_aer import Aer
 from qiskit_machine_learning.utils import algorithm_globals
 from qiskit.primitives import StatevectorEstimator
-from qiskit.circuit.library import ZZFeatureMap, RealAmplitudes
+from qiskit.circuit.library import ZZFeatureMap, EfficientSU2
 from qiskit_machine_learning.neural_networks import EstimatorQNN
 from qiskit_machine_learning.algorithms import NeuralNetworkRegressor
-from qiskit_algorithms.optimizers import COBYLA
+from qiskit_algorithms.optimizers import SPSA
 from qiskit_algorithms.gradients import FiniteDiffEstimatorGradient
 
 # Load Data
-data = pd.read_excel('C:/Users/SWARNAJIT ROY/Desktop/Projects/BatteryPrediction/device_battery_data.xlsx')
+data = pd.read_excel('C:/Users/SWARNAJIT ROY/Desktop/Projects/BatteryPrediction/Battery_Life_Prediction/device_battery_data.xlsx')
 
 # Feature Engineering
 data['alpha'] = data['Category'].map({
     'Laptop': 0.80, 'Smartwatch': 0.70, 'Tablet': 0.70, 
-    'Smartphone': 0.75, 'Gaming console': 0.85
+    'Smartphone': 0.75, 'Gaming Console': 0.85
 }).fillna(0.75)
 
 data['beta'] = data['Category'].map({
     'Laptop': 0.20, 'Smartwatch': 0.30, 'Tablet': 0.30, 
-    'Smartphone': 0.25, 'Gaming console': 0.15
+    'Smartphone': 0.25, 'Gaming Console': 0.15
 }).fillna(0.25)
 
 data['Battery_Degradation_Factor'] = (
@@ -81,11 +81,11 @@ seed = 42
 algorithm_globals.random_seed = seed
 
 estimator = StatevectorEstimator()
-gradient = FiniteDiffEstimatorGradient(estimator, epsilon=1e-6)
+gradient = FiniteDiffEstimatorGradient(estimator, epsilon=1e-4)
 
 num_qubits = X_reduced.shape[1]
 feature_map = ZZFeatureMap(feature_dimension=num_qubits, reps=3, entanglement='full')
-ansatz = RealAmplitudes(num_qubits, reps=2, entanglement='full')
+ansatz = EfficientSU2(num_qubits, reps=3, entanglement='full')
 
 qnn = EstimatorQNN(
     circuit=feature_map.compose(ansatz),
@@ -95,10 +95,13 @@ qnn = EstimatorQNN(
     gradient=gradient
 )
 
-optimizer = COBYLA(maxiter=200)  # Increase iterations for better training
+optimizer = SPSA(maxiter=500)  # Increase iterations for better training
 nn_regressor = NeuralNetworkRegressor(qnn, optimizer=optimizer)
 nn_regressor.fit(X_train, y_train)
 y_pred = nn_regressor.predict(X_test)
+
+# Ensure non-negative predictions
+y_pred = np.maximum(0, y_pred)
 
 # Performance Metrics
 mse = mean_squared_error(y_test, y_pred)
