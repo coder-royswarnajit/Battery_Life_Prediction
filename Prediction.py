@@ -6,7 +6,7 @@ from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
 # Load dataset
-data = pd.read_excel('C:/Users/SWARNAJIT ROY/Desktop/Projects/BatteryPrediction/Battery_Life_Prediction/device_battery_data.xlsx')
+data = pd.read_excel('C:/Users/SWARNAJIT ROY/Desktop/Projects/BatteryPrediction/Battery_Life_Prediction/Noise_Colorfit_Battery_Data.xlsx')
 
 # Define helper functions
 def get_alpha(category):
