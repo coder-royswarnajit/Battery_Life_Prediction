@@ -1,5 +1,5 @@
 
-# Battery Life Prediction Hybrid Model
+# Battery Life Prediction Model
 
 This repository contains Python programs that predict the battery life of various devices using a **hybrid model** approach. The models combine analytical formulas based on domain knowledge with machine learning techniques (both classical and quantum) to provide robust battery life estimates.
 
